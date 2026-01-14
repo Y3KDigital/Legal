@@ -1,0 +1,115 @@
+id: rwa_issuance
+version: 0.1
+product: RWA_Issuance
+jurisdiction_scope:
+  - GLOBAL_TEMPLATE
+states:
+  - id: ideation
+    description: "Initial product intent; identify asset class, target users, target jurisdictions."
+    required_evidence:
+      - id: product_brief
+        type: document
+        owner_role: product
+        storage_ref: "docs/30-product-flows/"
+    controls: []
+    transitions:
+      - to: structuring
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: structuring
+    description: "Entity structuring, asset rights verification, custody/servicing model."
+    required_evidence:
+      - id: rights_and_title_memo
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+      - id: tax_memo
+        type: memo
+        owner_role: tax
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: offering_design
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: tax
+              required: true
+
+  - id: offering_design
+    description: "Disclosures, eligibility rules, distribution plan, transfer restrictions."
+    required_evidence:
+      - id: securities_characterization_matrix
+        type: matrix
+        owner_role: legal
+        storage_ref: "docs/20-jurisdictions/jurisdiction-matrix.*"
+      - id: disclosure_pack
+        type: document
+        owner_role: legal
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: build_and_test
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: engineering
+              required: true
+
+  - id: build_and_test
+    description: "Smart contract build, security review, testnet rehearsal."
+    required_evidence:
+      - id: contract_specs
+        type: spec
+        owner_role: engineering
+        storage_ref: "docs/40-contracts/"
+      - id: security_review
+        type: report
+        owner_role: engineering
+        storage_ref: "contracts/audits/"
+    controls: []
+    transitions:
+      - to: launch
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: engineering
+              required: true
+            - role: compliance
+              required: true
+
+  - id: launch
+    description: "Deploy, distribute, operate with monitoring and reporting."
+    required_evidence:
+      - id: launch_checklist
+        type: checklist
+        owner_role: compliance
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: post_issuance
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: post_issuance
+    description: "Reporting, audits, corporate actions, redemptions."
+    required_evidence: []
+    controls:
+      - kyc_aml
+    transitions: []

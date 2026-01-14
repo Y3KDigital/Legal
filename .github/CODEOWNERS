@@ -1,0 +1,7 @@
+# Adjust owners as needed.
+* @legal-owner @tax-owner @engineering-owner
+
+/docs/20-jurisdictions/ @legal-owner
+/compliance/ @legal-owner
+/contracts/ @engineering-owner
+/agents/ @legal-owner @tax-owner

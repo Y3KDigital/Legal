@@ -1,0 +1,39 @@
+version: 0.1
+description: "Routes requests to the right domain agent and enforces escalation gates."
+rules:
+  - match:
+      contains_any:
+        - "tax"
+        - "withholding"
+        - "VAT"
+    route_to: tax
+    escalation:
+      required_human_role: tax
+
+  - match:
+      contains_any:
+        - "Howey"
+        - "securities"
+        - "offering"
+        - "prospectus"
+    route_to: securities
+    escalation:
+      required_human_role: legal
+
+  - match:
+      contains_any:
+        - "Solidity"
+        - "smart contract"
+        - "audit"
+    route_to: contracts
+    escalation:
+      required_human_role: engineering
+
+  - match:
+      contains_any:
+        - "jurisdiction"
+        - "regulator"
+        - "licensing"
+    route_to: jurisdiction
+    escalation:
+      required_human_role: legal

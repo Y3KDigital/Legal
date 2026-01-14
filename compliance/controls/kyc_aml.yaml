@@ -1,0 +1,13 @@
+id: kyc_aml
+version: 0.1
+description: "KYC/AML control set placeholder; adapt per jurisdiction and product."
+requirements:
+  - id: customer_identity_verification
+    description: "Verify customer identity to required standard."
+    owner_role: compliance
+  - id: sanctions_screening
+    description: "Screen against sanctions and watchlists (frequency defined by policy pack)."
+    owner_role: compliance
+  - id: ongoing_monitoring
+    description: "Define triggers and cadence for ongoing monitoring."
+    owner_role: compliance

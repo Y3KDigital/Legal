@@ -1,0 +1,25 @@
+schema_version: 1
+description: >-
+  Minimal schema guidance for a lifecycle state machine used to drive legal/compliance gates.
+fields:
+  id: string
+  version: string
+  product: string
+  jurisdiction_scope: [string]
+  states:
+    - id: string
+      description: string
+      required_evidence:
+        - id: string
+          type: string
+          owner_role: string
+          storage_ref: string
+      controls:
+        - string
+      transitions:
+        - to: string
+          guard:
+            all_evidence_present: boolean
+            approvals:
+              - role: string
+                required: boolean
