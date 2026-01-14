@@ -1,0 +1,74 @@
+jurisdiction: US
+version: 0.1
+description: "United States policy pack for RWA/stablecoin compliance"
+
+overrides:
+  # RWA Issuance
+  - state_machine: rwa_issuance
+    state: offering_design
+    additional_evidence:
+      - id: securities_exemption_analysis
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "Reg D, Reg S, Reg A, or other exemption analysis"
+      - id: blue_sky_review
+        type: checklist
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "State-level securities law review"
+    additional_controls:
+      - accredited_investor_verification
+
+  # Stablecoin
+  - state_machine: stablecoin_lifecycle
+    state: regulatory_analysis
+    additional_evidence:
+      - id: money_transmitter_analysis
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "State money transmitter license requirements"
+      - id: securities_analysis
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "Howey test analysis: is stablecoin a security?"
+
+additions:
+  # US-Specific Controls
+  - control_id: accredited_investor_verification
+    description: "Verify accredited investor status per SEC Regulation D"
+    requirements:
+      - id: income_test
+        description: "Income > $200k (individual) or $300k (joint) in last 2 years"
+        owner_role: compliance
+        verification: "Tax returns, W-2, pay stubs"
+      - id: net_worth_test
+        description: "Net worth > $1M (excluding primary residence)"
+        owner_role: compliance
+        verification: "Bank statements, brokerage statements, CPA letter"
+      - id: entity_test
+        description: "Entity with > $5M assets, or all owners accredited"
+        owner_role: compliance
+        verification: "Financial statements"
+
+  - control_id: fincen_bsa_aml
+    description: "FinCEN Bank Secrecy Act / AML requirements"
+    requirements:
+      - id: cip
+        description: "Customer Identification Program (31 CFR 1010.220)"
+        owner_role: compliance
+      - id: sar_filing
+        description: "File SARs for suspicious activity"
+        owner_role: compliance
+        trigger: suspicious_activity_detected
+      - id: ctr_filing
+        description: "File CTRs for cash transactions > $10k"
+        owner_role: compliance
+        trigger: transaction_threshold
+
+notes:
+  - "Money transmitter licenses required in 48 states (MT, HI exempt)"
+  - "Stablecoins may be securities under Howey test (case-by-case)"
+  - "State blue sky laws apply even if federal exemption used"

@@ -1,0 +1,126 @@
+id: secondary_trading
+version: 0.1
+product: Secondary_Trading_Platform
+jurisdiction_scope:
+  - GLOBAL_TEMPLATE
+description: "State machine for operating a secondary trading venue for tokenized securities or RWAs"
+
+states:
+  - id: platform_design
+    description: "Define trading model, custody, settlement, and order matching"
+    required_evidence:
+      - id: platform_design_doc
+        type: document
+        owner_role: product
+        storage_ref: "docs/"
+      - id: technical_architecture
+        type: document
+        owner_role: engineering
+        storage_ref: "docs/"
+    controls: []
+    transitions:
+      - to: regulatory_classification
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: regulatory_classification
+    description: "Determine if platform is an exchange, ATS, broker-dealer, or other regulated entity"
+    required_evidence:
+      - id: classification_memo
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+      - id: jurisdiction_analysis
+        type: matrix
+        owner_role: legal
+        storage_ref: "docs/20-jurisdictions/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: licensing
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: licensing
+    description: "Obtain required licenses/registrations per jurisdiction"
+    required_evidence:
+      - id: license_applications
+        type: document
+        owner_role: legal
+        storage_ref: "docs/"
+      - id: granted_licenses
+        type: license
+        owner_role: compliance
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: build_and_integrate
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: compliance
+              required: true
+
+  - id: build_and_integrate
+    description: "Build trading infrastructure, integrate custody, implement surveillance"
+    required_evidence:
+      - id: system_spec
+        type: spec
+        owner_role: engineering
+        storage_ref: "docs/"
+      - id: surveillance_framework
+        type: document
+        owner_role: compliance
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+      - market_surveillance
+    transitions:
+      - to: launch
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: engineering
+              required: true
+            - role: compliance
+              required: true
+
+  - id: launch
+    description: "Open platform to users, begin trading operations"
+    required_evidence:
+      - id: launch_checklist
+        type: checklist
+        owner_role: operations
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+      - market_surveillance
+      - reporting
+    transitions:
+      - to: operations
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: operations
+    description: "Ongoing trading, custody, surveillance, and regulatory reporting"
+    required_evidence: []
+    controls:
+      - kyc_aml
+      - market_surveillance
+      - reporting
+      - sanctions_screening
+    transitions: []

@@ -1,0 +1,19 @@
+version: 0.1
+domain: tax
+description: "Tax posture and compliance support (CPA workflow)"
+safety:
+  never_claim_definitive: true
+  always_cite_sources: true
+  require_cpa_review: true
+  escalate_on:
+    - "cross-border withholding"
+    - "novel token structure"
+    - "tax treaty analysis"
+tools:
+  - tax_memo_outline
+  - withholding_analysis
+  - reporting_requirements_checklist
+constraints:
+  - "Do not provide securities advice"
+  - "Do not provide legal conclusions"
+  - "Always output CPA review checklist"

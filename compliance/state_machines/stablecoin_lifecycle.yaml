@@ -1,0 +1,175 @@
+id: stablecoin_lifecycle
+version: 0.1
+product: Stablecoin_Operations
+jurisdiction_scope:
+  - GLOBAL_TEMPLATE
+description: "Lifecycle state machine for stablecoin issuance and ongoing operations"
+
+states:
+  - id: design
+    description: "Define stablecoin model: backing, peg mechanism, custody, redemption"
+    required_evidence:
+      - id: product_design_doc
+        type: document
+        owner_role: product
+        storage_ref: "docs/30-product-flows/"
+      - id: risk_assessment
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: entity_structuring
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: tax
+              required: true
+
+  - id: entity_structuring
+    description: "Set up issuing entity, reserve custody, banking relationships"
+    required_evidence:
+      - id: entity_structure_memo
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+      - id: custody_agreement
+        type: agreement
+        owner_role: legal
+        storage_ref: "contracts/legal/"
+      - id: banking_relationship
+        type: agreement
+        owner_role: operations
+        storage_ref: "contracts/legal/"
+    controls:
+      - kyc_aml
+      - reserve_custody
+    transitions:
+      - to: regulatory_analysis
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: regulatory_analysis
+    description: "Determine regulatory classification per jurisdiction (payment instrument, e-money, security, etc.)"
+    required_evidence:
+      - id: classification_matrix
+        type: matrix
+        owner_role: legal
+        storage_ref: "docs/20-jurisdictions/jurisdiction-matrix.template.csv"
+      - id: licensing_requirements
+        type: checklist
+        owner_role: legal
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+    transitions:
+      - to: contract_build
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: compliance
+              required: true
+
+  - id: contract_build
+    description: "Build and audit stablecoin smart contracts with mint/burn/pause/compliance hooks"
+    required_evidence:
+      - id: contract_spec
+        type: spec
+        owner_role: engineering
+        storage_ref: "docs/40-contracts/"
+      - id: audit_report
+        type: report
+        owner_role: engineering
+        storage_ref: "contracts/audits/"
+    controls:
+      - reserve_custody
+    transitions:
+      - to: reserve_attestation
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: engineering
+              required: true
+            - role: legal
+              required: true
+
+  - id: reserve_attestation
+    description: "Set up reserve attestation and reporting framework"
+    required_evidence:
+      - id: attestation_framework
+        type: document
+        owner_role: compliance
+        storage_ref: "docs/"
+      - id: auditor_engagement
+        type: agreement
+        owner_role: compliance
+        storage_ref: "contracts/legal/"
+    controls:
+      - reserve_custody
+      - reporting
+    transitions:
+      - to: launch
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: compliance
+              required: true
+
+  - id: launch
+    description: "Deploy contracts, begin minting, distribute to users"
+    required_evidence:
+      - id: launch_checklist
+        type: checklist
+        owner_role: operations
+        storage_ref: "docs/"
+    controls:
+      - kyc_aml
+      - reserve_custody
+      - reporting
+    transitions:
+      - to: operations
+        guard:
+          all_evidence_present: true
+          approvals:
+            - role: legal
+              required: true
+            - role: operations
+              required: true
+
+  - id: operations
+    description: "Ongoing mint/burn, attestations, reporting, monitoring"
+    required_evidence: []
+    controls:
+      - kyc_aml
+      - reserve_custody
+      - reporting
+      - sanctions_screening
+    transitions:
+      - to: wind_down
+        guard:
+          manual_trigger: true
+          approvals:
+            - role: legal
+              required: true
+
+  - id: wind_down
+    description: "Redemption process, contract wind-down, final attestation"
+    required_evidence:
+      - id: wind_down_plan
+        type: document
+        owner_role: legal
+        storage_ref: "docs/"
+    controls:
+      - reserve_custody
+      - reporting
+    transitions: []

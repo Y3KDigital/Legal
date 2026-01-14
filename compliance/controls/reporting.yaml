@@ -1,0 +1,28 @@
+id: reporting
+version: 0.1
+description: "Regulatory reporting and disclosure controls"
+requirements:
+  - id: periodic_disclosures
+    description: "Regular public or regulatory disclosures per jurisdiction requirements"
+    owner_role: compliance
+    frequency: jurisdiction_specific
+    
+  - id: transaction_reporting
+    description: "Transaction reporting to regulators (if required)"
+    owner_role: compliance
+    trigger: per_regulation
+    
+  - id: suspicious_activity
+    description: "File SARs/STRs when suspicious activity detected"
+    owner_role: compliance
+    trigger: event_based
+    
+  - id: audit_trail
+    description: "Maintain complete audit trail for all regulated activities"
+    owner_role: operations
+    retention: jurisdiction_specific_minimum
+    
+  - id: change_notifications
+    description: "Notify regulators of material changes (ownership, control, business model)"
+    owner_role: legal
+    trigger: event_based

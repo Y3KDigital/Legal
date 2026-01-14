@@ -1,0 +1,76 @@
+jurisdiction: EU
+version: 0.1
+description: "European Union policy pack under MiCA and MiFID II"
+
+overrides:
+  # RWA Issuance (if security token)
+  - state_machine: rwa_issuance
+    state: regulatory_analysis
+    additional_evidence:
+      - id: mifid_classification
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "Classify token under MiFID II (security, financial instrument, etc.)"
+      - id: prospectus_requirement
+        type: checklist
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "Prospectus Regulation analysis and exemptions"
+
+  # Stablecoin (MiCA)
+  - state_machine: stablecoin_lifecycle
+    state: regulatory_analysis
+    additional_evidence:
+      - id: mica_classification
+        type: memo
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "EMT vs ART vs utility token under MiCA"
+      - id: white_paper
+        type: document
+        owner_role: legal
+        storage_ref: "docs/"
+        description: "MiCA white paper (mandatory for EMT/ART)"
+    additional_controls:
+      - mica_authorization
+
+additions:
+  # MiCA-Specific Controls
+  - control_id: mica_authorization
+    description: "MiCA authorization for EMT or ART issuance"
+    requirements:
+      - id: competent_authority_approval
+        description: "Obtain approval from NCA (or ESMA for significant tokens)"
+        owner_role: legal
+      - id: white_paper_publication
+        description: "Publish white paper with required disclosures"
+        owner_role: compliance
+      - id: reserve_requirements
+        description: "Maintain adequate reserves (EMT: 100% same currency; ART: adequate + diversified)"
+        owner_role: operations
+      - id: redemption_rights
+        description: "Provide redemption at par (EMT) or reference value (ART)"
+        owner_role: operations
+
+  - control_id: amld_compliance
+    description: "AMLD5/AMLD6 AML/CFT requirements for crypto-asset service providers"
+    requirements:
+      - id: cdd
+        description: "Customer due diligence per AMLD"
+        owner_role: compliance
+      - id: ongoing_monitoring
+        description: "Ongoing transaction monitoring"
+        owner_role: compliance
+      - id: str_filing
+        description: "File suspicious transaction reports to FIU"
+        owner_role: compliance
+        trigger: suspicious_activity_detected
+      - id: travel_rule
+        description: "Transfer of Funds Regulation compliance"
+        owner_role: compliance
+
+notes:
+  - "MiCA phased implementation: EMTs/ARTs by mid-2024, other tokens by end-2024"
+  - "Significant tokens (> EUR 5M daily tx or > 1M holders) subject to stricter rules"
+  - "EU passport available once authorized in one member state"

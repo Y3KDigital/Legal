@@ -1,0 +1,114 @@
+version: '3.9'
+
+services:
+  # MCP Orchestrator - routes requests to domain agents
+  mcp-orchestrator:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: legal-mcp-orchestrator
+    environment:
+      - NODE_ENV=production
+      - SERVICE_NAME=orchestrator
+      - LOG_LEVEL=info
+      - ROUTING_CONFIG=/app/agents/orchestrator/routing_policy.yaml
+    volumes:
+      - ./agents:/app/agents:ro
+      - ./compliance:/app/compliance:ro
+      - ./docs:/app/docs:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - legal-net
+    restart: unless-stopped
+
+  # Securities Domain Agent
+  mcp-securities:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: legal-mcp-securities
+    environment:
+      - NODE_ENV=production
+      - SERVICE_NAME=securities
+      - LOG_LEVEL=info
+      - DOMAIN_CONFIG=/app/agents/securities/config.yaml
+      - SYSTEM_PROMPT_PATH=/app/agents/securities/system_prompt.md
+    volumes:
+      - ./agents/securities:/app/agents/securities:ro
+      - ./compliance:/app/compliance:ro
+      - ./docs/20-jurisdictions:/app/docs/jurisdictions:ro
+    ports:
+      - "8081:8080"
+    networks:
+      - legal-net
+    restart: unless-stopped
+
+  # Tax Domain Agent
+  mcp-tax:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: legal-mcp-tax
+    environment:
+      - NODE_ENV=production
+      - SERVICE_NAME=tax
+      - LOG_LEVEL=info
+      - DOMAIN_CONFIG=/app/agents/tax/config.yaml
+      - SYSTEM_PROMPT_PATH=/app/agents/tax/system_prompt.md
+    volumes:
+      - ./agents/tax:/app/agents/tax:ro
+      - ./compliance:/app/compliance:ro
+      - ./docs/20-jurisdictions:/app/docs/jurisdictions:ro
+    ports:
+      - "8082:8080"
+    networks:
+      - legal-net
+    restart: unless-stopped
+
+  # Contracts Domain Agent
+  mcp-contracts:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: legal-mcp-contracts
+    environment:
+      - NODE_ENV=production
+      - SERVICE_NAME=contracts
+      - LOG_LEVEL=info
+      - DOMAIN_CONFIG=/app/agents/contracts/config.yaml
+      - SYSTEM_PROMPT_PATH=/app/agents/contracts/system_prompt.md
+    volumes:
+      - ./agents/contracts:/app/agents/contracts:ro
+      - ./contracts:/app/contracts:ro
+      - ./compliance:/app/compliance:ro
+    ports:
+      - "8083:8080"
+    networks:
+      - legal-net
+    restart: unless-stopped
+
+  # Jurisdiction Domain Agent
+  mcp-jurisdiction:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: legal-mcp-jurisdiction
+    environment:
+      - NODE_ENV=production
+      - SERVICE_NAME=jurisdiction
+      - LOG_LEVEL=info
+      - DOMAIN_CONFIG=/app/agents/jurisdiction/config.yaml
+    volumes:
+      - ./agents/jurisdiction:/app/agents/jurisdiction:ro
+      - ./docs/20-jurisdictions:/app/docs/jurisdictions:ro
+      - ./compliance/policy_packs:/app/compliance/policy_packs:ro
+    ports:
+      - "8084:8080"
+    networks:
+      - legal-net
+    restart: unless-stopped
+
+networks:
+  legal-net:
+    driver: bridge

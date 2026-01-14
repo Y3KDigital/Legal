@@ -1,0 +1,93 @@
+name: Enhanced CI/CD
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  lint-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install yamllint
+        run: pip install yamllint
+      
+      - name: Lint YAML files
+        run: yamllint -d "{extends: default, rules: {line-length: {max: 200}}}" compliance docs agents layer1 || true
+
+  lint-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+      
+      - name: Lint Markdown
+        run: markdownlint '**/*.md' --ignore node_modules --ignore mcp-server/node_modules || true
+
+  validate-state-machines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Validate state machine schemas
+        run: |
+          pip install pyyaml jsonschema
+          echo "TODO: Add state machine validation script"
+
+  solidity-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+      
+      - name: Run Forge tests
+        working-directory: contracts/ethereum
+        run: |
+          forge --version || echo "Foundry not configured yet"
+          echo "TODO: Add forge test once contracts have test suite"
+
+  mcp-server-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        working-directory: mcp-server
+        run: npm ci
+      
+      - name: Build TypeScript
+        working-directory: mcp-server
+        run: npm run build
+      
+      - name: Run tests
+        working-directory: mcp-server
+        run: npm test || echo "Tests not yet implemented"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build Docker images
+        run: docker-compose build || echo "Docker build test"

@@ -1,0 +1,62 @@
+{
+  "genesis_time": "2026-01-01T00:00:00.000000000Z",
+  "chain_id": "legal-chain-1",
+  "initial_height": "1",
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "100000000"
+    },
+    "evidence": {
+      "max_age_num_blocks": "100000",
+      "max_age_duration": "172800000000000"
+    },
+    "validator": {
+      "pub_key_types": ["ed25519"]
+    }
+  },
+  "validators": [],
+  "app_state": {
+    "compliance": {
+      "params": {
+        "kyc_required": true,
+        "sanctions_screening_required": true,
+        "default_jurisdiction": "US"
+      },
+      "identities": [],
+      "policy_packs": [
+        {
+          "jurisdiction": "US",
+          "uri": "ipfs://QmUS_policy_pack_v0.1"
+        },
+        {
+          "jurisdiction": "EU",
+          "uri": "ipfs://QmEU_policy_pack_v0.1"
+        }
+      ]
+    },
+    "rwa": {
+      "params": {
+        "issuance_requires_legal_review": true,
+        "minimum_evidence_count": 3
+      },
+      "tokens": []
+    },
+    "stablecoin": {
+      "params": {
+        "reserve_attestation_required": true,
+        "attestation_max_age_blocks": "28800"
+      },
+      "stablecoins": []
+    },
+    "governance": {
+      "params": {
+        "voting_period": "604800000000000",
+        "quorum": "0.4",
+        "threshold": "0.5",
+        "emergency_pause_authority": ["legal_multisig_address"]
+      },
+      "proposals": []
+    }
+  }
+}

@@ -1,0 +1,28 @@
+id: market_surveillance
+version: 0.1
+description: "Market abuse and manipulation detection controls for trading platforms"
+requirements:
+  - id: trade_surveillance
+    description: "Real-time and post-trade surveillance for manipulation patterns"
+    owner_role: compliance
+    verification: "Surveillance system documentation + alert logs"
+    
+  - id: insider_trading_detection
+    description: "Monitor for insider trading patterns and front-running"
+    owner_role: compliance
+    verification: "Surveillance rules + investigation logs"
+    
+  - id: wash_trading_detection
+    description: "Detect wash trading, self-trading, and artificial volume"
+    owner_role: compliance
+    verification: "Surveillance rules + investigation logs"
+    
+  - id: alert_investigation
+    description: "Documented process for investigating and resolving surveillance alerts"
+    owner_role: compliance
+    verification: "Investigation procedures + case logs"
+    
+  - id: regulatory_reporting
+    description: "Report suspicious trading activity to regulators when required"
+    owner_role: compliance
+    trigger: per_regulation

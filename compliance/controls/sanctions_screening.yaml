@@ -1,0 +1,32 @@
+id: sanctions_screening
+version: 0.1
+description: "Sanctions and watchlist screening controls"
+requirements:
+  - id: onboarding_screening
+    description: "Screen all users against sanctions lists during onboarding"
+    owner_role: compliance
+    lists:
+      - OFAC_SDN
+      - UN_Sanctions
+      - EU_Sanctions
+      - UK_Sanctions
+    
+  - id: ongoing_screening
+    description: "Periodically re-screen existing users against updated lists"
+    owner_role: compliance
+    frequency: daily_or_upon_list_update
+    
+  - id: transaction_screening
+    description: "Screen transactions for sanctioned counterparties"
+    owner_role: compliance
+    trigger: real_time_or_near_real_time
+    
+  - id: hit_resolution
+    description: "Documented process for resolving screening hits (false positives vs true matches)"
+    owner_role: compliance
+    verification: "Resolution procedures + case logs"
+    
+  - id: blocking_enforcement
+    description: "Technical controls to block transactions involving sanctioned parties"
+    owner_role: operations
+    verification: "Technical implementation + test evidence"

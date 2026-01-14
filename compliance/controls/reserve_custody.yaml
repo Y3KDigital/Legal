@@ -1,0 +1,29 @@
+id: reserve_custody
+version: 0.1
+description: "Controls for custody and safeguarding of reserve assets backing tokens"
+requirements:
+  - id: segregated_accounts
+    description: "Reserve assets held in segregated accounts distinct from operating funds"
+    owner_role: operations
+    verification: "Account statements + legal opinion"
+    
+  - id: custody_agreement
+    description: "Qualified custodian with appropriate insurance and regulatory oversight"
+    owner_role: legal
+    verification: "Executed custody agreement + custodian regulatory status"
+    
+  - id: reconciliation
+    description: "Daily reconciliation of on-chain supply vs reserve holdings"
+    owner_role: operations
+    verification: "Automated reconciliation reports + manual review"
+    
+  - id: attestation
+    description: "Regular third-party attestation of reserve sufficiency"
+    owner_role: compliance
+    verification: "Attestation reports from qualified auditor/accounting firm"
+    frequency: monthly_or_more_frequent
+    
+  - id: emergency_access
+    description: "Defined emergency access controls and multi-signature requirements"
+    owner_role: operations
+    verification: "Access control documentation + test evidence"

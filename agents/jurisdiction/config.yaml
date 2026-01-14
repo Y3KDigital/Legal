@@ -1,0 +1,18 @@
+version: 0.1
+domain: jurisdiction
+description: "Jurisdiction-specific regulatory lookup and guidance"
+safety:
+  never_assert_without_source: true
+  require_counsel_for_novel_claims: true
+  escalate_on:
+    - "no primary source found"
+    - "conflicting guidance"
+    - "recent regulatory change"
+tools:
+  - jurisdiction_summary
+  - regulator_lookup
+  - licensing_requirements
+constraints:
+  - "Only cite primary sources in sources.md"
+  - "Flag 'DRAFT' status clearly"
+  - "Never claim a rule is final without counsel sign-off"

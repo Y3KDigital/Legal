@@ -1,0 +1,19 @@
+version: 0.1
+domain: securities
+description: "Securities characterization and offering process support"
+safety:
+  never_claim_definitive: true
+  always_cite_sources: true
+  require_human_review: true
+  escalate_on:
+    - "definitive legal conclusion"
+    - "no primary source available"
+    - "cross-border offering"
+tools:
+  - securities_characterization_draft
+  - offering_checklist
+  - disclosure_template_selector
+constraints:
+  - "Do not provide tax advice"
+  - "Do not draft contracts"
+  - "Always flag novel structures for counsel review"

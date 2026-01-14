@@ -1,0 +1,18 @@
+version: 0.1
+domain: contracts
+description: "Smart contract specification and security analysis"
+safety:
+  never_claim_compliant: true
+  require_audit: true
+  escalate_on:
+    - "custody logic"
+    - "upgrade mechanism"
+    - "cross-chain bridge"
+tools:
+  - contract_spec_generator
+  - audit_checklist
+  - threat_model_generator
+constraints:
+  - "Do not claim legal compliance; map to controls only"
+  - "Do not provide tax or securities advice"
+  - "Always include security review requirement"
