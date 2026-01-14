@@ -16,8 +16,7 @@ This repository is a shared working system for an attorney and CPA team building
 
 ## Repo Structure
 
-- `docs/` — human-readable playbooks, checklists, flow trees
-- `compliance/` — machine-readable policy packs + state machines
+- `docs/` — human-readable playbooks, checklists, flow trees  - `docs/ayg-platform/` – **AYG Insurance & Financial Services Platform** — Complete documentation for real-world RWA implementation including ERISA-compliant benefits, SPV capital structure, and institutional-grade RWA integration- `compliance/` — machine-readable policy packs + state machines
 - `agents/` — AI agent separation: prompts, routing, tools, and boundaries
 - `contracts/` — smart contract implementations by chain
 - `integrations/` — payment rails, oracle, and messaging integrations (specs + adapters)
@@ -25,10 +24,18 @@ This repository is a shared working system for an attorney and CPA team building
 
 ## Start Here
 
+### For General RWA/Securities Work:
+
 1. Read `docs/00-vision/vision.md`
 2. Define the target product(s) in `docs/30-product-flows/`
 3. Fill the jurisdiction matrix template in `docs/20-jurisdictions/jurisdiction-matrix.template.csv`
 4. Customize state machines in `compliance/state_machines/`
+
+### For AYG Platform Review:
+
+1. Start with [`docs/ayg-platform/00-executive-summary/README.md`](docs/ayg-platform/00-executive-summary/README.md)
+2. Review role-specific documentation per the [AYG Platform README](docs/ayg-platform/README.md)
+3. See real-world implementation of RWA frameworks in regulated environment
 
 ## How We Work
 
