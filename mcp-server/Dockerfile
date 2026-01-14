@@ -3,15 +3,15 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY package*.json ./
-RUN npm ci --only=production
+COPY package.json ./
+RUN npm install --omit=dev && npm cache clean --force
 
 # Copy source
 COPY src ./src
 COPY tsconfig.json ./
 
 # Build TypeScript
-RUN npm run build
+RUN npm install typescript && npm run build && npm uninstall typescript
 
 # Expose port
 EXPOSE 8080

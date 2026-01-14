@@ -1,0 +1,11 @@
+.git
+.github
+.vscode
+*.md
+!mcp-server/README.md
+node_modules
+dist
+.env
+.env.*
+*.log
+.DS_Store
