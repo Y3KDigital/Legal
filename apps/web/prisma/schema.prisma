@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  role          Role      @default(FOUNDER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  projects  Project[]  @relation("FounderProjects")
+  approvals Approval[]
+
+  @@index([email])
+}
+
+enum Role {
+  FOUNDER
+  LEGAL_COUNSEL
+  CPA
+  ENGINEER
+  OBSERVER
+  ADMIN
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================================================
+// PROJECT & WORKFLOW
+// ============================================================================
+
+model Project {
+  id                   String               @id @default(cuid())
+  status               ProjectStatus        @default(INITIATED)
+  assetClass           RWAAssetClass
+  jurisdiction         Jurisdiction
+  legalWrapper         LegalWrapper
+  distributionStrategy DistributionStrategy
+  assetDescription     String               @db.Text
+  assetValue           Float
+  economicTerms        Json
+  custodyModel         Json
+  bankingRelationships Json
+  attestationPlan      Json
+  workflowId           String?
+  founderId            String
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  founder   User       @relation("FounderProjects", fields: [founderId], references: [id])
+  gates     Gate[]
+  artifacts Artifact[]
+  approvals Approval[]
+
+  @@index([founderId])
+  @@index([status])
+  @@index([workflowId])
+}
+
+enum ProjectStatus {
+  INITIATED
+  RUNNING
+  LEGAL_REVIEW
+  BLOCKED
+  APPROVED
+  DEPLOYED
+  RERUNNING
+}
+
+enum RWAAssetClass {
+  US_TREASURIES
+  PRIVATE_CREDIT
+  REAL_ESTATE
+  COMMODITIES
+  CARBON_CREDITS
+  FINE_ART
+  COLLECTIBLES
+  EQUIPMENT_LEASING
+  ROYALTY_STREAMS
+  LITIGATION_FINANCE
+  INSURANCE_LINKED
+}
+
+enum Jurisdiction {
+  US_FEDERAL
+  US_DELAWARE
+  US_WYOMING
+  EU
+  UK
+  SINGAPORE
+  UAE
+  SWITZERLAND
+}
+
+enum LegalWrapper {
+  DELAWARE_STATUTORY_TRUST
+  WYOMING_DAO_LLC
+  CAYMAN_SPV
+  LUXEMBOURG_SICAV
+  UK_LIMITED_PARTNERSHIP
+}
+
+enum DistributionStrategy {
+  REG_D_506C
+  REG_D_506B
+  REG_S
+  REG_A_PLUS
+  REG_CF
+}
+
+// ============================================================================
+// GATES & COMPLIANCE
+// ============================================================================
+
+model Gate {
+  id            String      @id @default(cuid())
+  projectId     String
+  name          GateName
+  status        GateStatus  @default(LOCKED)
+  agentId       String
+  memoPath      String?
+  failureReason String?     @db.Text
+  executedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, name])
+  @@index([projectId])
+  @@index([status])
+}
+
+enum GateStatus {
+  LOCKED
+  PENDING
+  PASS
+  FAIL
+}
+
+enum GateName {
+  SECURITIES
+  ERISA
+  TAX
+  BANKING
+  CPA
+  SMART_CONTRACT
+  AUDIT
+  GOVERNANCE
+}
+
+// ============================================================================
+// ARTIFACTS & EVIDENCE
+// ============================================================================
+
+model Artifact {
+  id           String       @id @default(cuid())
+  projectId    String
+  type         ArtifactType
+  filePath     String
+  gitCommitSha String
+  ipfsCid      String?
+  generatedBy  String // Agent ID or User ID
+  createdAt    DateTime     @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([type])
+}
+
+enum ArtifactType {
+  SECURITIES_MEMO
+  ERISA_MEMO
+  TAX_MEMO
+  BANKING_REPORT
+  CPA_MEMO
+  SC_REPORT
+  AUDIT_REPORT
+  GOVERNANCE_CONFIG
+  SMART_CONTRACT
+  ATTESTATION
+}
+
+// ============================================================================
+// APPROVALS & SIGNATURES
+// ============================================================================
+
+model Approval {
+  id         String           @id @default(cuid())
+  projectId  String
+  gateName   GateName
+  decision   ApprovalDecision
+  comments   String?          @db.Text
+  signature  String
+  approvedBy String
+  approvedAt DateTime         @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [approvedBy], references: [id])
+
+  @@unique([projectId, gateName, approvedBy])
+  @@index([projectId])
+  @@index([approvedBy])
+}
+
+enum ApprovalDecision {
+  APPROVE
+  BLOCK
+}

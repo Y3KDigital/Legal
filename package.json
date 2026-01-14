@@ -1,0 +1,49 @@
+{
+  "name": "mcp-ai-law-firm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Institutional-grade RWA tokenization compliance platform powered by multi-agent control plane",
+  "author": "Y3K Digital <kevan@y3kdigital.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Y3KDigital/Legal.git"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:mcp": "pnpm --filter mcp-runtime dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:unit": "turbo test:unit",
+    "test:integration": "turbo test:integration",
+    "test:e2e": "turbo test:e2e",
+    "test:coverage": "turbo test:coverage",
+    "test:watch": "turbo test:watch",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean && rm -rf node_modules",
+    "db:generate": "pnpm --filter web db:generate",
+    "db:migrate:create": "pnpm --filter web db:migrate:create",
+    "db:migrate:deploy": "pnpm --filter web db:migrate:deploy",
+    "db:reset": "pnpm --filter web db:reset",
+    "db:studio": "pnpm --filter web db:studio",
+    "db:setup": "pnpm db:generate && pnpm db:migrate:deploy"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "prettier": "^3.2.4",
+    "turbo": "^1.12.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=8.15.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

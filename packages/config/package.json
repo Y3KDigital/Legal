@@ -1,0 +1,11 @@
+{
+  "name": "@mcp-law/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared configuration for MCP AI Law Firm platform",
+  "exports": {
+    "./eslint": "./eslint.js",
+    "./typescript": "./tsconfig.json",
+    "./tailwind": "./tailwind.config.js"
+  }
+}
