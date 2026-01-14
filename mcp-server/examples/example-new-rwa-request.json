@@ -1,0 +1,128 @@
+{
+  "workflow": "NEW_RWA_REQUEST",
+  "workflow_id": "RWA-2026-001",
+  "timestamp": "2026-01-13T12:00:00Z",
+  "initiator": "kevan@y3kdigital.com",
+  "project_name": "Real Estate Tokenization - Commercial Property Fund",
+  
+  "input": {
+    "rwa_type": "Real Estate-Backed Revenue Token",
+    "description": "Token representing fractional ownership interests in a commercial real estate fund holding Class A office properties in major US metros. Token holders receive quarterly distributions based on net rental income after expenses. Redemption available quarterly subject to fund liquidity.",
+    
+    "jurisdiction": "US",
+    "target_jurisdictions": ["US", "Cayman Islands"],
+    
+    "legal_wrapper": "SPV",
+    "legal_wrapper_details": {
+      "type": "Delaware Statutory Trust",
+      "purpose": "Hold fractional interests in commercial properties",
+      "bankruptcy_remote": true,
+      "trust_structure": "Statutory trust with independent trustee"
+    },
+    
+    "distribution": "Institutional",
+    "distribution_details": {
+      "target_investors": "Institutional investors, Qualified Purchasers, Accredited Investors",
+      "minimum_investment": 100000,
+      "expected_investor_count": 50,
+      "secondary_trading": "Restricted - transfer restrictions in trust agreement"
+    },
+    
+    "asset_details": {
+      "asset_class": "Commercial Real Estate",
+      "properties": [
+        {
+          "type": "Class A Office",
+          "location": "Austin, TX",
+          "valuation": 50000000
+        },
+        {
+          "type": "Class A Office",
+          "location": "Denver, CO",
+          "valuation": 45000000
+        },
+        {
+          "type": "Class A Office",
+          "location": "Nashville, TN",
+          "valuation": 35000000
+        }
+      ],
+      "total_valuation": 130000000,
+      "custody": "Properties held by Delaware Statutory Trust, deeds recorded",
+      "valuation_cadence": "Quarterly - independent appraisal"
+    },
+    
+    "economic_terms": {
+      "revenue_source": "Net rental income from properties",
+      "distribution_frequency": "Quarterly",
+      "distribution_calculation": "Pro-rata based on token holdings, after trust expenses and reserves",
+      "redemption": "Quarterly redemption windows, subject to fund liquidity (max 10% per quarter)",
+      "fees": {
+        "management_fee": "1.5% annually on NAV",
+        "performance_fee": "None",
+        "redemption_fee": "2% if redeemed within first year"
+      }
+    },
+    
+    "smart_contract_summary": "ERC-20 compliant token with transfer restrictions (allowlist), pausable, supply-capped at 1,300,000 tokens (representing $130M initial valuation at $100/token). Restricted minting (admin-only). No yield logic in contract - distributions handled off-chain via wire transfer to accredited investors. Token represents economic interest only, not legal ownership (held by trust). Multisig governance (3-of-5). Full event emissions for auditability.",
+    
+    "smart_contract_code_location": "contracts/RealEstateToken.sol",
+    "smart_contract_commit_hash": "abc123def456",
+    
+    "custody_model": {
+      "physical_assets": "Properties held by Delaware Statutory Trust",
+      "custodian": "Independent corporate trustee (licensed trust company)",
+      "account_structure": "Segregated trust account",
+      "attestation": "Quarterly proof-of-ownership via recorded deeds + trustee attestation"
+    },
+    
+    "banking_relationship": {
+      "bank": "First Republic Bank (or similar institutional bank)",
+      "account_type": "Trust account",
+      "aml_kyc": "Institutional KYC on all token holders (accredited investor verification)",
+      "sanctions_screening": "OFAC screening on all investors"
+    },
+    
+    "attestation_plan": {
+      "auditor": "Big 4 accounting firm (to be selected)",
+      "cadence": "Quarterly",
+      "scope": "Proof-of-reserves (deed verification), NAV calculation, distribution reconciliation"
+    },
+    
+    "additional_context": {
+      "expected_launch_date": "Q2 2026",
+      "regulatory_filings": "Reg D 506(c) filing with SEC, state blue sky filings",
+      "marketing_approach": "Institutional roadshow, no general solicitation",
+      "legal_counsel": "External securities counsel retained",
+      "prior_similar_offerings": "None - first RWA offering for this sponsor"
+    }
+  },
+  
+  "expected_agents_sequence": [
+    "SEC-A",
+    "ERISA-A",
+    "TAX-A",
+    "BANK-A",
+    "CPA-A",
+    "SC-A",
+    "AUDIT-A",
+    "GOV-A"
+  ],
+  
+  "output_expectations": {
+    "securities_classification": "Expected to be classified as security - likely investment contract under Howey",
+    "exemption_strategy": "Reg D 506(c) - accredited investors only, general solicitation permitted with verification",
+    "erisa_posture": "Expected PASS - aggregate structure, no participant tracking",
+    "tax_treatment": "Expected classification as debt or hybrid instrument",
+    "smart_contract_compliance": "Expected PASS if no yield logic present and all required features implemented"
+  },
+  
+  "notes": [
+    "This is a comprehensive RWA structure with real estate backing",
+    "Distributions handled off-chain (wire transfers) - critical for Howey mitigation",
+    "Token is economic interest only - legal ownership stays in trust",
+    "Transfer restrictions essential - allowlist enforcement required",
+    "Institutional-only posture reduces ERISA risk",
+    "Quarterly attestation creates strong audit trail"
+  ]
+}

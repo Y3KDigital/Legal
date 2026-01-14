@@ -1,0 +1,509 @@
+{
+  "name": "mcp-ai-lawfirm",
+  "version": "1.0.0",
+  "description": "MCP AI Law Firm - Institutional RWA Legal Operations Control Plane",
+  "type": "orchestrated-multi-agent",
+  "orchestrator": {
+    "id": "ORCH",
+    "name": "MCP Orchestrator",
+    "type": "policy-engine",
+    "fail_mode": "closed",
+    "authority": {
+      "can_draft": false,
+      "can_approve": false,
+      "can_block": true,
+      "can_route": true,
+      "can_validate": true
+    },
+    "rules": [
+      {
+        "rule_id": "RULE-001",
+        "name": "No Technical Work Before Legal Work",
+        "enforcement": "strict",
+        "condition": "legal_cluster_status != 'COMPLETE'",
+        "action": "block",
+        "targets": ["SC-A", "GOV-A", "OBS-A"]
+      },
+      {
+        "rule_id": "RULE-002",
+        "name": "No Deployment Without Audit + Governance",
+        "enforcement": "strict",
+        "condition": "SC-A.status != 'PASS' OR AUDIT-A.status != 'PASS' OR GOV-A.approvals.complete != true",
+        "action": "block_deployment",
+        "targets": ["deployment"]
+      },
+      {
+        "rule_id": "RULE-003",
+        "name": "Any Agent May Block",
+        "enforcement": "strict",
+        "condition": "any_agent.status == 'FAIL'",
+        "action": "terminate_workflow",
+        "targets": ["all"]
+      },
+      {
+        "rule_id": "RULE-004",
+        "name": "Missing Artifacts = Hard Stop",
+        "enforcement": "strict",
+        "condition": "required_output.missing == true",
+        "action": "terminate_workflow",
+        "targets": ["all"]
+      }
+    ]
+  },
+  "agents": {
+    "legal_cluster": [
+      {
+        "id": "SEC-A",
+        "name": "Securities Counsel Agent",
+        "role": "securities_counsel",
+        "cluster": "legal",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Securities law posture (Howey, Reves, exemptions)",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "securities_classification_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "unregistered_security_without_exemption",
+          "unclear_howey_analysis",
+          "distribution_posture_undefined"
+        ],
+        "prompt_file": "prompts/sec-a-prompt.txt"
+      },
+      {
+        "id": "ERISA-A",
+        "name": "ERISA Counsel Agent",
+        "role": "erisa_counsel",
+        "cluster": "legal",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Prevent plan-asset contamination",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "erisa_boundary_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "participant_level_tracking_detected",
+          "individual_account_logic_detected",
+          "plan_asset_contamination_risk"
+        ],
+        "prompt_file": "prompts/erisa-a-prompt.txt"
+      },
+      {
+        "id": "TAX-A",
+        "name": "Tax Counsel Agent",
+        "role": "tax_counsel",
+        "cluster": "legal",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Tax characterization and reporting",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "tax_treatment_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "tax_characterization_unclear",
+          "withholding_obligations_undefined"
+        ],
+        "prompt_file": "prompts/tax-a-prompt.txt"
+      },
+      {
+        "id": "BANK-A",
+        "name": "Banking Counsel Agent",
+        "role": "banking_counsel",
+        "cluster": "legal",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Bank, custody, AML, payments",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "bank_risk_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "custody_model_unacceptable",
+          "aml_kyc_inadequate",
+          "bank_partner_objection"
+        ],
+        "prompt_file": "prompts/bank-a-prompt.txt"
+      },
+      {
+        "id": "STRUCT-A",
+        "name": "Transaction Structuring Agent",
+        "role": "structuring_counsel",
+        "cluster": "legal",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Legal wrapper & deal architecture",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "structure_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "wrapper_selection_unclear",
+          "bankruptcy_remoteness_inadequate"
+        ],
+        "prompt_file": "prompts/struct-a-prompt.txt"
+      }
+    ],
+    "finance_cluster": [
+      {
+        "id": "CPA-A",
+        "name": "CPA / Accounting Agent",
+        "role": "accounting",
+        "cluster": "finance",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "GAAP / IFRS accounting truth",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "accounting_treatment_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "consolidation_analysis_unclear",
+          "revenue_recognition_undefined"
+        ],
+        "prompt_file": "prompts/cpa-a-prompt.txt"
+      },
+      {
+        "id": "AUDIT-A",
+        "name": "Audit & Attestation Agent",
+        "role": "audit",
+        "cluster": "finance",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Evidence & verification",
+        "output_type": "report",
+        "output_format": "markdown",
+        "required_outputs": [
+          "attestation_plan",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "no_attestation_plan",
+          "no_independent_auditor",
+          "reconciliation_process_undefined"
+        ],
+        "prompt_file": "prompts/audit-a-prompt.txt"
+      },
+      {
+        "id": "VAL-A",
+        "name": "Valuation Agent",
+        "role": "valuation",
+        "cluster": "finance",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Fair value support",
+        "output_type": "memo",
+        "output_format": "markdown",
+        "required_outputs": [
+          "valuation_methodology_memo",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "valuation_methodology_unclear",
+          "asc820_non_compliant"
+        ],
+        "prompt_file": "prompts/val-a-prompt.txt"
+      }
+    ],
+    "tech_cluster": [
+      {
+        "id": "SC-A",
+        "name": "Smart Contract Compliance Agent",
+        "role": "smart_contract_compliance",
+        "cluster": "tech",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Enforce legal constraints in code",
+        "output_type": "report",
+        "output_format": "markdown",
+        "required_outputs": [
+          "compliance_report",
+          "deployment_checklist",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "yield_bearing_logic_detected",
+          "automated_payout_detected",
+          "dividend_distribution_detected",
+          "permissionless_transfer_detected",
+          "participant_tracking_detected",
+          "economic_upgrade_path_detected",
+          "missing_pause_mechanism",
+          "missing_supply_cap",
+          "missing_transfer_restrictions"
+        ],
+        "prompt_file": "prompts/sc-a-prompt.txt"
+      },
+      {
+        "id": "GOV-A",
+        "name": "Protocol Governance Agent",
+        "role": "governance",
+        "cluster": "tech",
+        "authority": {
+          "can_draft": true,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Human-in-the-loop authority",
+        "output_type": "log",
+        "output_format": "markdown",
+        "required_outputs": [
+          "governance_action_log",
+          "approval_records",
+          "status",
+          "blocking_issues"
+        ],
+        "blocking_conditions": [
+          "missing_legal_approval",
+          "missing_compliance_approval",
+          "missing_governance_approval"
+        ],
+        "approval_requirements": {
+          "legal": {
+            "approver": "General Counsel or Securities Counsel",
+            "artifacts_required": [
+              "securities_classification_memo",
+              "erisa_boundary_memo",
+              "tax_treatment_memo",
+              "bank_risk_memo"
+            ]
+          },
+          "compliance": {
+            "approver": "Chief Compliance Officer",
+            "artifacts_required": [
+              "smart_contract_compliance_report",
+              "deployment_checklist",
+              "attestation_plan"
+            ]
+          },
+          "governance": {
+            "approver": "Multisig or Board",
+            "artifacts_required": [
+              "complete_audit_pack",
+              "deployment_attestation"
+            ],
+            "multisig_threshold": "3-of-5"
+          }
+        },
+        "prompt_file": "prompts/gov-a-prompt.txt"
+      },
+      {
+        "id": "OBS-A",
+        "name": "Chain Observability Agent",
+        "role": "observability",
+        "cluster": "tech",
+        "authority": {
+          "can_draft": false,
+          "can_approve": false,
+          "can_block": true
+        },
+        "mandate": "Read-only monitoring",
+        "output_type": "alert",
+        "output_format": "json",
+        "required_outputs": [
+          "monitoring_report",
+          "status",
+          "anomalies"
+        ],
+        "blocking_conditions": [
+          "material_drift_detected",
+          "unauthorized_mint_detected",
+          "unauthorized_burn_detected"
+        ],
+        "prompt_file": "prompts/obs-a-prompt.txt"
+      }
+    ]
+  },
+  "workflows": {
+    "NEW_RWA_REQUEST": {
+      "workflow_id": "WF-001",
+      "name": "New RWA Launch Workflow",
+      "description": "Complete legal, compliance, and technical review for new RWA token issuance",
+      "sequence": "immutable",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "SEC-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 30
+        },
+        {
+          "step": 2,
+          "agent": "ERISA-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 30
+        },
+        {
+          "step": 3,
+          "agent": "TAX-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 30
+        },
+        {
+          "step": 4,
+          "agent": "BANK-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 30
+        },
+        {
+          "step": 5,
+          "agent": "CPA-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 30,
+          "depends_on": ["SEC-A", "ERISA-A", "TAX-A", "BANK-A"]
+        },
+        {
+          "step": 6,
+          "agent": "SC-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 60,
+          "depends_on": ["SEC-A", "ERISA-A", "TAX-A", "BANK-A", "CPA-A"]
+        },
+        {
+          "step": 7,
+          "agent": "AUDIT-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": 30,
+          "depends_on": ["SC-A"]
+        },
+        {
+          "step": 8,
+          "agent": "GOV-A",
+          "parallel": false,
+          "required": true,
+          "blocking_on_fail": true,
+          "timeout_minutes": null,
+          "depends_on": ["SEC-A", "ERISA-A", "TAX-A", "BANK-A", "CPA-A", "SC-A", "AUDIT-A"],
+          "note": "No timeout - waits for human approval"
+        }
+      ],
+      "output_artifacts": [
+        "deployment_attestation",
+        "complete_audit_pack"
+      ],
+      "termination_conditions": [
+        "any_agent_fails",
+        "missing_artifact",
+        "approval_rejected"
+      ]
+    }
+  },
+  "evidence_store": {
+    "type": "git",
+    "repository": "https://github.com/Y3KDigital/Legal",
+    "branch": "main",
+    "base_path": "docs/memos",
+    "commit_on_complete": true,
+    "hash_verification": {
+      "enabled": true,
+      "algorithm": "SHA-256"
+    },
+    "ipfs_anchoring": {
+      "enabled": false,
+      "note": "Optional - enable for regulatory immutability proofs"
+    }
+  },
+  "audit_traceability": {
+    "enabled": true,
+    "log_level": "detailed",
+    "track_timestamps": true,
+    "track_reviewers": true,
+    "track_approvals": true,
+    "audit_pack_generation": true
+  },
+  "security": {
+    "ai_authority": {
+      "can_draft": true,
+      "can_analyze": true,
+      "can_flag": true,
+      "can_block": true,
+      "can_approve": false,
+      "can_deploy": false,
+      "can_commit_capital": false,
+      "can_create_obligations": false,
+      "can_file_with_regulators": false
+    },
+    "human_authority": {
+      "can_approve": true,
+      "can_deploy": true,
+      "can_commit_capital": true,
+      "can_file_with_regulators": true
+    },
+    "access_control": {
+      "agents_read_only": true,
+      "no_deployment_keys": true,
+      "no_external_write": true,
+      "orchestrator_bypass": false
+    }
+  },
+  "fail_closed_rule": {
+    "enabled": true,
+    "description": "If MCP system is offline, nothing ships",
+    "enforcement": "strict",
+    "fallback": "block_all"
+  }
+}
