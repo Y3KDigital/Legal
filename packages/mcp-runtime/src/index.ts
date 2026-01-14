@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import type {
+import {
   EventSubmissionRequest,
   EventSubmissionResponse,
   Workflow,
@@ -13,7 +13,7 @@ export interface MCPClientConfig {
   headers?: Record<string, string>;
 }
 
-export class MCPOrchestrator Client {
+export class MCPOrchestratorClient {
   private client: AxiosInstance;
 
   constructor(config: MCPClientConfig) {
