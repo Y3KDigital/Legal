@@ -1,5 +1,12 @@
 # Program Architecture & RWA Platform Integration
 
+> **Scope & Non-Reliance Notice**
+>
+> This document describes architectural, operational, and compliance design principles.
+> It does not create legal rights, modify plan documents, or substitute for licensed legal,
+> tax, or regulatory advice. All legally operative rights arise solely from executed
+> agreements, plan documents, and applicable law.
+
 ## Purpose of This Document
 
 This document expands the Program architecture to explicitly describe how Real World Asset (RWA) infrastructure integrates with the AYG platform. It is written to bridge traditional benefits, insurance, and wellness structures with on-chain and tokenized representations used for transparency, capital efficiency, and institutional interoperability.

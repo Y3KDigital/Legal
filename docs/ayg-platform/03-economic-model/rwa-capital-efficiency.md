@@ -1,5 +1,12 @@
 # RWA-Enabled Capital Efficiency & Economic Integration
 
+> **Scope & Non-Reliance Notice**
+>
+> This document describes architectural, operational, and compliance design principles.
+> It does not create legal rights, modify plan documents, or substitute for licensed legal,
+> tax, or regulatory advice. All legally operative rights arise solely from executed
+> agreements, plan documents, and applicable law.
+
 ## Purpose
 
 This document explains how RWA infrastructure improves capital efficiency, lowers cost of capital, and supports the enterprise valuation of the AYG platform—without altering regulated operations.

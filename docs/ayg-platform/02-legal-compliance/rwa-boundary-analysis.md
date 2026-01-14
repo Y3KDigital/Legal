@@ -1,5 +1,12 @@
 # RWA Legal Boundary & Compliance Analysis
 
+> **Scope & Non-Reliance Notice**
+>
+> This document describes architectural, operational, and compliance design principles.
+> It does not create legal rights, modify plan documents, or substitute for licensed legal,
+> tax, or regulatory advice. All legally operative rights arise solely from executed
+> agreements, plan documents, and applicable law.
+
 ## Purpose
 
 This document defines the explicit legal, regulatory, and compliance boundaries governing the use of Real World Asset (RWA) representations within the AYG platform. It is written to prevent category errors between regulated benefit plans, insurance products, financial instruments, and on-chain representations.
